@@ -9,8 +9,6 @@ import {
 } from '../utils/GeoUtils';
 import SingleLineInput from '../components/SingleLineInput';
 
-// lat : 37.213770, long : 127.038024
-
 export default function MainScreen() {
   const [currentRegion, setCurrentRegion] = useState<{
     latitude: number;
