@@ -1,5 +1,5 @@
-import React from "react";
-import { Text as RNText } from "react-native";
+import React from 'react';
+import {Text as RNText} from 'react-native';
 
 export function Typography({
   color,
@@ -18,8 +18,7 @@ export function Typography({
         color: color,
         fontSize: fontSize,
       }}
-      numberOfLines={numOfLines}
-    >
+      numberOfLines={numOfLines}>
       {children}
     </RNText>
   );
