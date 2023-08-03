@@ -109,7 +109,7 @@ export default function MainScreen() {
   useEffect(() => {
     // setInterval(() => {
     //   onMapReady();
-    // }, 5000);
+    // }, 10000);
   }, [onMapReady]);
 
   return (
@@ -147,6 +147,14 @@ export default function MainScreen() {
                 title={item.title}
                 description={item.address}
                 pinColor="blue"
+                onCalloutPress={() => {
+                  navigation.push('Detail', {
+                    latitude: item.latitude,
+                    longitude: item.longitude,
+                    address: item.address,
+                    title: item.title,
+                  });
+                }}
               />
             );
           })}
