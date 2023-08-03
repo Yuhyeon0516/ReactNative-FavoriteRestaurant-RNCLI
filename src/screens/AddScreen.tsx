@@ -4,16 +4,39 @@ import {Header} from '../components/Header/Header';
 import {Typography} from '../components/Typography';
 import {Spacer} from '../components/Spacer';
 import SingleLineInput from '../components/SingleLineInput';
-import {useRootRoute} from '../navigation/RootNavigation';
+import {useRootNavigation, useRootRoute} from '../navigation/RootNavigation';
 import MapView, {Marker} from 'react-native-maps';
 import {CustomButton} from '../components/CustomButton';
+import {saveNewRestraunt} from '../utils/RealTimeDatabaseUtils';
 
 export default function AddScreen() {
   const routes = useRootRoute<'Add'>();
+  const navigation = useRootNavigation<'Add'>();
   const [title, setTitle] = useState('');
-  const onPressBack = useCallback(() => {}, []);
+  const onPressBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
 
-  const onPressSave = useCallback(() => {}, []);
+  const onPressSave = useCallback(async () => {
+    if (!title) {
+      return;
+    }
+
+    await saveNewRestraunt({
+      title: title,
+      address: routes.params.address,
+      latitude: routes.params.latitude,
+      longitude: routes.params.longitude,
+    });
+
+    navigation.goBack();
+  }, [
+    navigation,
+    routes.params.address,
+    routes.params.latitude,
+    routes.params.longitude,
+    title,
+  ]);
 
   return (
     <View style={{flex: 1}}>
