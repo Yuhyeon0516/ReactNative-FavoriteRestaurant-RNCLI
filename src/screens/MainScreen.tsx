@@ -2,7 +2,11 @@ import {Text, View} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import MapView, {Marker} from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
-import {getAddressFromCoords, getCoordsFromAddress} from '../utils/GeoUtils';
+import {
+  getAddressFromCoords,
+  getCoordsByKeyword,
+  getCoordsFromAddress,
+} from '../utils/GeoUtils';
 import SingleLineInput from '../components/SingleLineInput';
 
 // lat : 37.213770, long : 127.038024
@@ -39,6 +43,18 @@ export default function MainScreen() {
   }, [onChangeLocation]);
 
   const onFindAddress = useCallback<() => Promise<void>>(async () => {
+    const keywordResult = await getCoordsByKeyword(query);
+
+    if (keywordResult) {
+      setCurrentAddress(keywordResult!.address);
+      setCurrentRegion({
+        latitude: parseFloat(keywordResult!.latitude.toString()),
+        longitude: parseFloat(keywordResult!.longitude.toString()),
+      });
+      setQuery('');
+      return;
+    }
+
     const addressResult = await getCoordsFromAddress(query);
 
     if (!addressResult) {
@@ -50,6 +66,7 @@ export default function MainScreen() {
       latitude: parseFloat(addressResult!.latitude.toString()),
       longitude: parseFloat(addressResult!.longitude.toString()),
     });
+    setQuery('');
   }, [query]);
 
   useEffect(() => {
@@ -80,7 +97,7 @@ export default function MainScreen() {
         <View style={{backgroundColor: 'white'}}>
           <SingleLineInput
             value={query}
-            placeholder="주소를 입력해주세요."
+            placeholder="검색 할 내용을 입력해주세요."
             onChangeText={setQuery}
             onSubmitEditing={onFindAddress}
           />
