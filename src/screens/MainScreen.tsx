@@ -9,6 +9,7 @@ import {
 } from '../utils/GeoUtils';
 import SingleLineInput from '../components/SingleLineInput';
 import {useRootNavigation} from '../navigation/RootNavigation';
+import {getRestrauntList} from '../utils/RealTimeDatabaseUtils';
 
 export default function MainScreen() {
   const navigation = useRootNavigation<'Main'>();
@@ -21,6 +22,10 @@ export default function MainScreen() {
   });
   const [currentAddress, setCurrentAddress] = useState<string | null>(null);
   const [query, setQuery] = useState<string>('');
+  const [isMapReady, setIsMapReady] = useState<boolean>(false);
+  const [markerList, setMarkerList] = useState<
+    {latitude: number; longitude: number; title: string; address: string}[]
+  >([]);
 
   const onChangeLocation = useCallback<
     (item: {latitude: number; longitude: number}) => Promise<void>
@@ -86,9 +91,26 @@ export default function MainScreen() {
     navigation,
   ]);
 
+  const onMapReady = useCallback(async () => {
+    setIsMapReady(true);
+    const restrauntList = await getRestrauntList();
+
+    if (restrauntList) {
+      setMarkerList(restrauntList);
+    } else {
+      return;
+    }
+  }, []);
+
   useEffect(() => {
     getMyLocation();
   }, [getMyLocation]);
+
+  useEffect(() => {
+    // setInterval(() => {
+    //   onMapReady();
+    // }, 5000);
+  }, [onMapReady]);
 
   return (
     <View style={{flex: 1}}>
@@ -100,15 +122,34 @@ export default function MainScreen() {
           latitudeDelta: 0.015,
           longitudeDelta: 0.021,
         }}
+        onMapReady={onMapReady}
         onLongPress={event => {
           onChangeLocation(event.nativeEvent.coordinate);
         }}>
-        <Marker
-          coordinate={{
-            latitude: parseFloat(currentRegion.latitude.toString()),
-            longitude: parseFloat(currentRegion.longitude.toString()),
-          }}
-        />
+        {isMapReady && (
+          <Marker
+            coordinate={{
+              latitude: parseFloat(currentRegion.latitude.toString()),
+              longitude: parseFloat(currentRegion.longitude.toString()),
+            }}
+            pinColor="red"
+          />
+        )}
+        {isMapReady &&
+          markerList.map(item => {
+            return (
+              <Marker
+                key={item.address}
+                coordinate={{
+                  latitude: item.latitude,
+                  longitude: item.longitude,
+                }}
+                title={item.title}
+                description={item.address}
+                pinColor="blue"
+              />
+            );
+          })}
       </MapView>
       <View style={{position: 'absolute', top: 24, left: 24, right: 24}}>
         <View style={{backgroundColor: 'white'}}>
