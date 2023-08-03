@@ -1,10 +1,20 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 import React from 'react';
 import MainScreen from '../screens/MainScreen';
 import AddScreen from '../screens/AddScreen';
 import DetailScreen from '../screens/DetailScreen';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 
-const Stack = createNativeStackNavigator();
+type ScreenParams = {
+  Main: undefined;
+  Add: {latitude: number; longitude: number; address: string};
+  Detail: {latitude: number; longitude: number; address: string; title: string};
+};
+
+const Stack = createNativeStackNavigator<ScreenParams>();
 
 export default function RootNavigation() {
   return (
@@ -16,3 +26,9 @@ export default function RootNavigation() {
     </Stack.Navigator>
   );
 }
+
+export const useRootNavigation = <RouteName extends keyof ScreenParams>() =>
+  useNavigation<NativeStackNavigationProp<ScreenParams, RouteName>>();
+
+export const useRootRoute = <RouteName extends keyof ScreenParams>() =>
+  useRoute<RouteProp<ScreenParams, RouteName>>();

@@ -1,4 +1,4 @@
-import {Text, View} from 'react-native';
+import {Pressable, Text, View} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import MapView, {Marker} from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
@@ -8,8 +8,10 @@ import {
   getCoordsFromAddress,
 } from '../utils/GeoUtils';
 import SingleLineInput from '../components/SingleLineInput';
+import {useRootNavigation} from '../navigation/RootNavigation';
 
 export default function MainScreen() {
+  const navigation = useRootNavigation<'Main'>();
   const [currentRegion, setCurrentRegion] = useState<{
     latitude: number;
     longitude: number;
@@ -67,6 +69,23 @@ export default function MainScreen() {
     setQuery('');
   }, [query]);
 
+  const onPressBottomAddress = useCallback(() => {
+    if (!currentAddress) {
+      return;
+    }
+
+    navigation.push('Add', {
+      latitude: currentRegion.latitude,
+      longitude: currentRegion.longitude,
+      address: currentAddress,
+    });
+  }, [
+    currentAddress,
+    currentRegion.latitude,
+    currentRegion.longitude,
+    navigation,
+  ]);
+
   useEffect(() => {
     getMyLocation();
   }, [getMyLocation]);
@@ -111,7 +130,8 @@ export default function MainScreen() {
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-          <View
+          <Pressable
+            onPress={onPressBottomAddress}
             style={{
               backgroundColor: 'gray',
               paddingHorizontal: 24,
@@ -119,7 +139,7 @@ export default function MainScreen() {
               borderRadius: 30,
             }}>
             <Text style={{fontSize: 16, color: 'white'}}>{currentAddress}</Text>
-          </View>
+          </Pressable>
         </View>
       )}
     </View>
