@@ -107,9 +107,9 @@ export default function MainScreen() {
   }, [getMyLocation]);
 
   useEffect(() => {
-    // setInterval(() => {
-    //   onMapReady();
-    // }, 10000);
+    setInterval(() => {
+      onMapReady();
+    }, 10000);
   }, [onMapReady]);
 
   return (
