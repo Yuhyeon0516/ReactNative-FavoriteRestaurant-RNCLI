@@ -17,3 +17,5 @@ If you click favorite restaurant in map, you move to Detail Sreen<br/>
 ---
 
 # Result
+
+![Result](https://github.com/Yuhyeon0516/ReactNative-FavoriteRestaurant-RNCLI/assets/120432007/546b7c5c-4d26-49c7-961c-ef85f15a3e0f)
